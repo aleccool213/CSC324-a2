@@ -2,8 +2,66 @@
 
 (require "class.rkt")
 
-; Comment out tests to avoid "bad syntax" errors when working
-; on the assignment.
+
+; Tests for Question 1
+
+(class-meta Point-meta (x y)
+  [
+   (distance other-point)
+   (let
+     (
+       [dx (- x (other-point "x"))]
+       [dy (- y (other-point "y"))]
+     )
+     (sqrt (+ (* dx dx) (* dy dy))))
+  ]
+)
+
+(test (let ([p (Point-meta 2 3)])
+        (p "_attributes"))
+      '(("x" 2) ("y" 3))
+)
+
+(class-meta Point-meta-more (x y u j))
+
+(test (let ([p (Point-meta-more 2 3 10 21)])
+        (p "_attributes"))
+      '(("x" 2) ("y" 3) ("u" 10) ("j" 21))
+)
+
+(class-meta Point-meta-none ())
+
+(test (let ([p (Point-meta-none)])
+        (p "_attributes"))
+      '()
+)
+
+(test (let ([p (Point-meta 2 3)])
+        (first (first (p "_methods"))))
+      "distance")
+
+(test (let* ([p (Point-meta 2 3)]
+             [f (second (first (p "_methods")))])
+        (f (Point-meta 10 20)))
+      18.788294228055936)
+;
+;; Check alphabetical order
+(class-meta A-meta (red blue green)
+  [(white x)
+   (+ x 10)]
+  [(black x)
+   (* x 2)])
+
+(test (let ([p (A-meta "b" "g" "r")])
+        (p "_attributes"))
+      '(("blue" "g")
+        ("green" "r")
+        ("red" "b")))
+
+(test (let ([p (A-meta 1 2 3)])
+        (map first (p "_methods")))
+      '("black" "white"))
+
 #|
 ; Traits for testing
 (define (distance-trait obj)
@@ -62,43 +120,4 @@
              [p2 (Point 15 40)])
         ((p1 "distance-plus") p2 20))
       35)
-
-; Tests for Question 1
-
-(class-meta Point-meta (x y)
-  [(distance other-point)
-   (let ([dx (- x (other-point "x"))]
-         [dy (- y (other-point "y"))])
-     (sqrt (+ (* dx dx) (* dy dy))))])
-
-(test (let ([p (Point-meta 2 3)])
-        (p "_attributes"))
-      '(("x" 2)
-        ("y" 3)))
-
-(test (let ([p (Point-meta 2 3)])
-        (first (first (p "_methods"))))
-      "distance")
-
-(test (let* ([p (Point-meta 2 3)]
-             [f (second (first (p "_methods")))])
-        (f (Point-meta 10 20)))
-      18.788294228055936)
-
-; Check alphabetical order
-(class-meta A-meta (red blue green)
-  [(white x)
-   (+ x 10)]
-  [(black x)
-   (* x 2)])
-
-(test (let ([p (A-meta "b" "g" "r")])
-        (p "_attributes"))
-      '(("blue" "g")
-        ("green" "r")
-        ("red" "b")))
-
-(test (let ([p (A-meta 1 2 3)])
-        (map first (p "_methods")))
-      '("black" "white"))
 |#
