@@ -22,13 +22,6 @@
       '(("x" 2) ("y" 3))
 )
 
-(class-meta Point-meta-more (x y u j))
-
-(test (let ([p (Point-meta-more 2 3 10 21)])
-        (p "_attributes"))
-      '(("x" 2) ("y" 3) ("u" 10) ("j" 21))
-)
-
 (class-meta Point-meta-none ())
 
 (test (let ([p (Point-meta-none)])
