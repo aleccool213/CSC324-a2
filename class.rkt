@@ -71,7 +71,11 @@ class macro to include support for traits and some basic introspection.
 ; QUESTION 2 (traits).
 (define-syntax class-trait
   (syntax-rules ()
-
+    [[class-trait <Class> (<attr> ...) (with <trait> ...)
+                  ((<method> <param> ...) <body>) ...]
+     [(class <Class> (<attr> ...)
+       ((<method> <param> ...) <body>) ...
+        (<trait>) ...)]]
     ))
 
 ; -----------------------------------------------------------------------------
