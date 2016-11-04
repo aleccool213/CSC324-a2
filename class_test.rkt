@@ -124,8 +124,7 @@
         ((p1 "distance-plus") p2 20))
       35)
 
-;
-(test (let* ([p1 (Point2 30 40)]
-             [p2 (Point 15 40)])
-        ((p1 "distance-plus") p2 20))
-      35)
+; testing two trait class works with trait method of first inherited trait
+(test (let* ([p1 (Point2 2 3)])
+        ((p1 "distance-to-self")))
+      0)
