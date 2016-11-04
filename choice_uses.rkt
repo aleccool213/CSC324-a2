@@ -45,8 +45,29 @@ extending the functionality of the backtracking library.
 > (next)
 "false."
 |#
-(define subsets (void))
+(define (subsets list)
+  (-< (power-set list)))
 
+(define (permutation lst)
+  (if (empty? lst)
+      '()
+      (insert (permutation (rest lst))
+              (first lst))))
+
+(define (insert lst val)
+  (if (empty? lst)
+      (list val)
+      (-< (cons val lst)
+          (cons (first lst)
+                (insert (rest lst) val)))))
+
+; change up this code
+(define (power-set set)
+  (if (null? set) '(())
+      (let ((power-set-of-rest (power-set (cdr set))))
+        (append power-set-of-rest
+                (map (lambda (subset) (cons (car set) subset))
+                     power-set-of-rest)))))
 
 ; QUESTION 4
 #|
@@ -63,6 +84,40 @@ extending the functionality of the backtracking library.
 |#
 (define sudoku-4 (void))
 
+(define (checkSudoku list)
+  (and (checkSquares list 4)(and (checkColumns list) (checkRows list))))
+
+(define (checkRows list)
+  (if (null? (first list))
+      #t
+      (if (has-duplicates? (first list))
+          #f
+          (checkRows (rest list)))
+      ))
+(define (checkColumns list)
+  (if (null? (first list))
+      #t
+      (if (has-duplicates? (map (lambda (x) (first x)) list))
+          #f
+          (checkRows (map (lambda (x) (rest x)) list)))
+  ))
+(define (checkSquares list n)
+  (if (or
+       (or
+        (or
+         (has-duplicates? '((list-ref(list-ref list 0) 0) (list-ref(list-ref list 0) 1) (list-ref(list-ref list 1) 0) (list-ref(list-ref list 1) 1)))
+         (has-duplicates? '((list-ref(list-ref list 0) 2) (list-ref(list-ref list 0) 3) (list-ref(list-ref list 1) 2) (list-ref(list-ref list 1) 3))))
+        (has-duplicates? '((list-ref(list-ref list 2) 0) (list-ref(list-ref list 2) 1) (list-ref(list-ref list 3) 0) (list-ref(list-ref list 3) 1))))
+       (has-duplicates? '((list-ref(list-ref list 2) 2) (list-ref(list-ref list 2) 3) (list-ref(list-ref list 3) 2) (list-ref(list-ref list 3) 3))))
+      #f
+      #t))
+
+;change this code
+(define (has-duplicates? lst)
+  (cond
+     [(empty? lst) #f]
+     [(not (not (member (first lst) (rest lst)))) #t]
+     [else (has-duplicates? (rest lst)) ]))
 
 ; QUESTION 5
 #|
