@@ -19,7 +19,7 @@
 
   (class-init Point (a b) (x y z)
     [
-      (init)
+      (init a b)
       (
         [r (random_func a)]
         [x (random_func r)]
@@ -35,14 +35,17 @@
 (define-syntax class-init
   (syntax-rules (init)
     [(class <Class> (<attr> ...) (<instance-vars> ...)
-       [(init <param> ...) <body>])
+       [(init) <init-body>] [(<method> <param> ...) <body>] ...)
      (define (<Class> <attr> ...)
        (lambda (msg)
          (let*
-           <body>
+           <init-body>
            (cond [(equal? msg (id->string <attr>)) <attr>]
                  ...
                  [(equal? msg (id->string <instance-vars>)) <instance-vars>]
+                 ...
+                 [(equal? msg (id->string <method>))
+                  (lambda (<param> ...) <body>)]
                  ...
                  [else "Unrecognized message!"]))
          )
