@@ -71,8 +71,22 @@ class macro to include support for traits and some basic introspection.
 ; QUESTION 2 (traits).
 (define-syntax class-trait
   (syntax-rules (with)
+    [(class-trait <Class> (<attr> ...) (with)
+        ((<method> <param> ...) <body>) ...)
+      (define (<Class> <attr> ...)
+        (lambda (msg)
+            (cond [(equal? msg (id->string <attr>)) <attr>]
+                  ...
+                  [(equal? msg (id->string <method>))
+                   (lambda (<param> ...) <body>)]
+                  ...
+                  [else "Unrecognized message!"]
+            )
+        )
+      )
+    ]
     [
-      (class-trait <Class> (<attr> ...) (with <trait> ...)
+      (class-trait <Class> (<attr> ...) (with <trait>)
         ((<method> <param> ...) <body>) ...
       )
       (define (<Class> <attr> ...)
@@ -87,7 +101,6 @@ class macro to include support for traits and some basic introspection.
             )
           )
         )
-        ...
       )
     ]
   )
