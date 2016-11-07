@@ -107,7 +107,7 @@ class macro to include support for traits and some basic introspection.
       )
     ]
     [
-      (class-trait <Class> (<attr> ...) (with <trait> ... <last-trait>)
+      (class-trait <Class> (<attr> ...) (with <trait> ...)
         ((<method> <param> ...) <body>) ...
       )
       (define (<Class> <attr> ...)
@@ -120,12 +120,17 @@ class macro to include support for traits and some basic introspection.
                        (lambda (<param> ...) <body>)]
                       ...
                       [else "Unrecognized message!"]))]
-             [y (<last-trait> x)]
-             [j (<trait> y)]
-             ...
+             [y (foldl
+                  (lambda (curr result)
+                    (curr result)
+                  )
+                  x
+                  (list <trait> ...)
+                )
+             ]
             )
             (
-              j
+              y
               msg
             )
           )
@@ -134,18 +139,6 @@ class macro to include support for traits and some basic introspection.
     ]
   )
 )
-
-(define-syntax helper
-  (syntax-rules ()
-    ((instance <id> (<arg> ...)
-               (<attr> ...))
-     (define-syntax <id>
-       (syntax-rules ()
-         ((<id> <msg>)
-          (cond ((equal? (quote <msg>) (quote <attr>))
-                 <arg>)
-                ...
-                (else "error"))))))))
 
 ; -----------------------------------------------------------------------------
 ; Class macro. This section is just for your reference.
