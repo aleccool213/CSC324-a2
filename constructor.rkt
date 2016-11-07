@@ -1,11 +1,13 @@
+#lang racket
+
 #|
   class-init
 
-  A macro which is used to define a class in racket.
+  A macro which is used to define a Class in racket.
   This macro allows to specify the initialization method.
   The initialization method only sets values for the classes attributes.
 
-  The macro is very similar to a origin class macro except now accepts a list of
+  The macro is very similar to our original class macro except now accepts a list of
   attributes which will be instance variables.
 
   Here is an example of the class init function from the python one in the handout
@@ -28,24 +30,26 @@
   )
 |#
 
+(provide class-init)
 
 (define-syntax class-init
-  (syntax-rules (init)
-   [
-     (
-       class <Class> (<init-params> ...) (<instance-var> ...)
-        [(init) <body>]
-     )
-     (let*
-       ; perform actions in the init function
-       ([x 10])
-       ; return resulting object
+  (syntax-rules ()
+    [(class <Class> (<attr> ...) (<instance-vars> ...)
+       [(<method> <param> ...) <body>] ...)
+     (define (<Class> <attr> ...)
        (lambda (msg)
-         (cond [(equal? msg (id->string <instance-var>)) x]
+         (cond [(equal? msg (id->string <attr>)) <attr>]
+               ...
+               [(equal? msg (id->string <method>))
+                (lambda (<param> ...) <body>)]
                ...
                [else "Unrecognized message!"]))
      )
-
-   ]
+    ]
   )
 )
+
+(define-syntax id->string
+  (syntax-rules ()
+    [(id->string <id>)
+     (symbol->string (quote <id>))]))
