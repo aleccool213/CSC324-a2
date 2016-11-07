@@ -33,17 +33,20 @@
 (provide class-init)
 
 (define-syntax class-init
-  (syntax-rules ()
+  (syntax-rules (init)
     [(class <Class> (<attr> ...) (<instance-vars> ...)
-       [(<method> <param> ...) <body>] ...)
+       [(init <param> ...) <body>])
      (define (<Class> <attr> ...)
        (lambda (msg)
-         (cond [(equal? msg (id->string <attr>)) <attr>]
-               ...
-               [(equal? msg (id->string <method>))
-                (lambda (<param> ...) <body>)]
-               ...
-               [else "Unrecognized message!"]))
+         (let*
+           <body>
+           (cond [(equal? msg (id->string <attr>)) <attr>]
+                 ...
+                 [(equal? msg (id->string <instance-vars>)) <instance-vars>]
+                 ...
+                 [else "Unrecognized message!"]))
+         )
+
      )
     ]
   )
