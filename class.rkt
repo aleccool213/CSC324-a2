@@ -71,13 +71,10 @@ class macro to include support for traits and some basic introspection.
 ; QUESTION 2 (traits).
 (define-syntax class-trait
   (syntax-rules (with)
-    [
-      (class-trait <Class> (<attr> ...) (with <trait> ...)
-        ((<method> <param> ...) <body>) ...
-      )
+    [(class-trait <Class> (<attr> ...) (with)
+        ((<method> <param> ...) <body>) ...)
       (define (<Class> <attr> ...)
-        (<trait>
-          (lambda (msg)
+        (lambda (msg)
             (cond [(equal? msg (id->string <attr>)) <attr>]
                   ...
                   [(equal? msg (id->string <method>))
@@ -85,13 +82,70 @@ class macro to include support for traits and some basic introspection.
                   ...
                   [else "Unrecognized message!"]
             )
+        )
+      )
+    ]
+    [
+      (class-trait <Class> (<attr> ...) (with <trait>)
+        ((<method> <param> ...) <body>) ...
+      )
+      (define (<Class> <attr> ...)
+        (lambda (msg)
+          (let
+            ([x (lambda (msg)
+                (cond [(equal? msg (id->string <attr>)) <attr>]
+                      ...
+                      [(equal? msg (id->string <method>))
+                       (lambda (<param> ...) <body>)]
+                      ...
+                      [else "Unrecognized message!"]
+                )
+            )])
+            ((<trait> x) msg)
           )
         )
-        ...
+      )
+    ]
+    [
+      (class-trait <Class> (<attr> ...) (with <trait> ... <last-trait>)
+        ((<method> <param> ...) <body>) ...
+      )
+      (define (<Class> <attr> ...)
+        (lambda (msg)
+          (let*
+            ([x (lambda (msg)
+                  (cond [(equal? msg (id->string <attr>)) <attr>]
+                      ...
+                      [(equal? msg (id->string <method>))
+                       (lambda (<param> ...) <body>)]
+                      ...
+                      [else "Unrecognized message!"]))]
+             [y (<last-trait> x)]
+             [j (<trait> y)]
+             ...
+            )
+            (
+              j
+              msg
+            )
+          )
+        )
       )
     ]
   )
 )
+
+(define-syntax helper
+  (syntax-rules ()
+    ((instance <id> (<arg> ...)
+               (<attr> ...))
+     (define-syntax <id>
+       (syntax-rules ()
+         ((<id> <msg>)
+          (cond ((equal? (quote <msg>) (quote <attr>))
+                 <arg>)
+                ...
+                (else "error"))))))))
 
 ; -----------------------------------------------------------------------------
 ; Class macro. This section is just for your reference.
