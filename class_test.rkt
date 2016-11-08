@@ -145,14 +145,31 @@
 (test (let* ([p1 (Point2 2 3)])
         ((p1 "distance-to-self")))
       0)
-;
+
 ;; testing two trait class works with trait method of second inherited trait
 (test (let* ([p1 (Point2 30 40)]
              [p2 (Point 15 40)])
         ((p1 "distance-plus") p2 20))
       35)
-
+;
+;; testing three traits and accessing third trait method
 (test (let* ([p1 (Point3 30 40)])
         ((p1 "random") 20)
       )
       20)
+
+; testing three traits and accessing second trait method
+(test (let* ([p1 (Point3 30 40)]
+             [p2 (Point 15 40)])
+        ((p1 "distance-plus") p2 20)
+      )
+      35)
+
+; testing three traits and accessing first trait method
+(test (let*
+        ([p1 (Point3 2 3)])
+        ((p1 "distance-to-self")))
+      0)
+
+; testing tree traits and make sure ordering is correct
+; should call inner most first
