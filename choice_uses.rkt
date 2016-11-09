@@ -228,4 +228,12 @@ extending the functionality of the backtracking library.
 |#
 (define-syntax fold-<
   (syntax-rules ()
+    [[fold-< <combine> <init> <expr>]
+      [let* ([fold-results <init>]
+             [fold-helper
+              (lambda (e)
+                (set! fold-results (<combine> e fold-results ))
+                (next)
+                fold-results)])
+       (fold-helper <expr>)]]
     ))
