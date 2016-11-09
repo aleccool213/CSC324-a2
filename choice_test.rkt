@@ -10,38 +10,105 @@
 
 
 ; Tests for subsets
-(test (all (subsets '()))
-      '(())
-)
+;(test (all (subsets '()))
+;      '(())
+;)
 
-(test (compare-multi (all (subsets '(1)))
-                     '(() (1)))
-      #t)
-
-(test (compare-multi (all (subsets '(1 2 3)))
-                     '(()
-                       (1)
-                       (2)
-                       (2 1)
-                       (3)
-                       (1 3)
-                       (2 3)
-                       (1 2 3)))
-      #t)
+;(test (compare-multi (all (subsets '(1)))
+;                     '(() (1)))
+;      #t)
+;
+;(test (compare-multi (all (subsets '(1 2 3)))
+;                     '(()
+;                       (1)
+;                       (2)
+;                       (2 1)
+;                       (3)
+;                       (1 3)
+;                       (2 3)
+;                       (1 2 3)))
+;      #t)
 
 ; Test for sudoku-4
-;(define grid1
-;  '((1 2 3 4)
-;    ("" "" 1 "")
-;    ("" "" 2 3)
-;    (2 "" "" 1)))
-;
-;(test (sudoku-4 grid1)
-;      '((1 2 3 4)
-;        (3 4 1 2)
-;        (4 1 2 3)
-;        (2 3 4 1)))
-;
+(define grid1
+  '((1 2 3 4)
+    ("" "" 1 "")
+    ("" "" 2 3)
+    (2 "" "" 1))
+)
+
+(define valid-soduku
+  '((1 2 3 4)
+    (3 4 1 2)
+    (4 1 2 3)
+    (2 3 4 1))
+)
+
+(define invalid-soduku-rows
+  '((1 2 3 4)
+    (3 4 1 2)
+    (4 1 2 100)
+    (2 3 4 1))
+)
+
+(define invalid-soduku-columns
+  '((1 2 3 4)
+    (3 4 1 2)
+    (4 3 2 1)
+    (2 3 4 1))
+)
+
+(define invalid-soduku-squares
+  '((1 3 2 4)
+    (3 4 1 2)
+    (4 2 3 1)
+    (2 1 4 3))
+)
+
+(test (checkSudoku valid-soduku)
+  #t
+)
+
+(test (check-rows valid-soduku)
+  #t
+)
+
+(test (check-rows invalid-soduku-rows)
+  #f
+)
+
+(test (check-columns valid-soduku)
+  #t
+)
+
+(test (check-columns invalid-soduku-columns)
+  #f
+)
+
+(test (checkSudoku valid-soduku)
+  #t
+)
+
+(test (check-squares valid-soduku)
+  #t
+)
+
+(test (check-squares valid-soduku)
+  #t
+)
+
+(test (check-squares invalid-soduku-squares)
+  #f
+)
+
+(test (all (generate-solutions grid1))
+  '(
+    '((1 2 3 4)
+      (3 4 1 2)
+      (4 1 2 3)
+      (2 3 4 1))
+   )
+)
 ;; Clear stack
 ;(clear)
 ;

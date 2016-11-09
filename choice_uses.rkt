@@ -10,7 +10,7 @@ extending the functionality of the backtracking library.
 (require "choice.rkt")
 
 ; Export functions for testing. Please don't change this line!
-(provide subsets sudoku-4 fold-< distrib extend)
+(provide subsets sudoku-4 fold-< distrib extend check-squares checkSudoku check-rows check-columns generate-solutions)
 
 ; QUESTION 3
 #|
@@ -48,9 +48,9 @@ extending the functionality of the backtracking library.
 
 (define (subsets lst)
   (if (empty? lst)
-      (list '())
-      (extend (subsets (rest lst))
-              (first lst))))
+    (list '())
+    (extend (subsets (rest lst))
+      (first lst))))
 
 (define (extend lst val)
   (append lst (list (distrib lst val)))
@@ -61,6 +61,7 @@ extending the functionality of the backtracking library.
       '()
       (cons (cons val (first lst))
             (distrib (rest lst) val))))
+
 
 ; QUESTION 4
 #|
@@ -75,44 +76,143 @@ extending the functionality of the backtracking library.
   is just to correctly express the constraints, and let the computer
   do the work.
 |#
-(define sudoku-4 (void))
+(define (sudoku-4 grid)
+  (?- checkSudoku (generate-solutions grid))
+)
 
-(define (checkSudoku list)
-  (and (checkSquares list 4)(and (checkColumns list) (checkRows list))))
+#|
+  generate-solutions
 
-(define (checkRows list)
-  (if (null? (first list))
-      #t
-      (if (has-duplicates? (first list))
-          #f
-          (checkRows (rest list)))
-      ))
-(define (checkColumns list)
-  (if (null? (first list))
-      #t
-      (if (has-duplicates? (map (lambda (x) (first x)) list))
-          #f
-          (checkRows (map (lambda (x) (rest x)) list)))
+  grid: an incomplete sodoku grid
+
+  - Returns a -< (yield) which generate all possible permuations
+  of the grid. A permuation of the grid is all of the quotes filled with
+  integers.
+|#
+(define (generate-solutions grid)
+  ; count empty slots, ()(empty_slots) * 4!) are how many possible solutions there are
+  ; something like this
+  ;(-< (single-solution grid) (next-solution grid))
+)
+
+
+
+(define (permutation lst)
+  (if (empty? lst)
+      '()
+      (insert (permutation (rest lst))
+              (first lst))))
+
+(define (insert lst val)
+  (if (empty? lst)
+      (list val)
+      (-< (cons val lst)
+          (cons (first lst)
+                (insert (rest lst) val)))))
+
+
+#|
+  checkSudoku
+
+  grid: a complete soduku grid
+
+  - Returns true if the soduku grid is valid :D
+|#
+(define (checkSudoku grid)
+  (and
+    (check-rows grid)
+    (check-columns grid)
+    (check-squares grid)
+  )
+)
+
+#|
+  check-rows
+
+  grid: a complete soduku grid
+
+  - Returns true if all of the rows contain the set (1 2 3 4)
+|#
+(define (check-rows grid)
+  (let
+    ([x (map (lambda (curr)
+              (if ;append if the list contains all four ints
+                (equal? (list->set '(1 2 3 4)) (list->set curr))
+                curr
+                '()
+              ))
+          grid
+        )
+    ])
+    ; if we have the same list as our init grid, we know its valid
+    (if (equal? x grid) #t #f)
+  )
+)
+
+
+#|
+  check-columns
+
+  grid: a complete soduku grid
+
+  - Returns true if all of the columns contain the set (1 2 3 4)
+|#
+(define (check-columns grid)
+  (check-rows (map
+    (lambda (curr)
+      (list
+        (list-ref (first grid) curr)
+        (list-ref (second grid) curr)
+        (list-ref (third grid) curr)
+        (list-ref (fourth grid) curr)
+      )
+    )
+    '(0 1 2 3)
   ))
-(define (checkSquares list n)
-  (if (or
-       (or
-        (or
-         (has-duplicates? '((list-ref(list-ref list 0) 0) (list-ref(list-ref list 0) 1) (list-ref(list-ref list 1) 0) (list-ref(list-ref list 1) 1)))
-         (has-duplicates? '((list-ref(list-ref list 0) 2) (list-ref(list-ref list 0) 3) (list-ref(list-ref list 1) 2) (list-ref(list-ref list 1) 3))))
-        (has-duplicates? '((list-ref(list-ref list 2) 0) (list-ref(list-ref list 2) 1) (list-ref(list-ref list 3) 0) (list-ref(list-ref list 3) 1))))
-       (has-duplicates? '((list-ref(list-ref list 2) 2) (list-ref(list-ref list 2) 3) (list-ref(list-ref list 3) 2) (list-ref(list-ref list 3) 3))))
-      #f
-      #t))
+)
 
-;change this code
-(define (has-duplicates? lst)
-  (cond
-     [(empty? lst) #f]
-     [(not (not (member (first lst) (rest lst)))) #t]
-     [else (has-duplicates? (rest lst)) ]))
+#|
+  check-squares
 
-; QUESTION 5
+  grid: a complete soduku grid
+
+  - Returns true if all of the squares contain the set (1 2 3 4)
+|#
+(define (check-squares grid)
+  (let
+    ([squares-to-rows (foldl
+                        (lambda (curr result)
+                          ; append two lists to the result
+                          ; first square and second square
+                          (append
+                            (list
+                              (list
+                                (list-ref (list-ref grid curr) 0)
+                                (list-ref (list-ref grid curr) 1)
+                                (list-ref (list-ref grid (+ curr 1)) 0)
+                                (list-ref (list-ref grid (+ curr 1)) 1)
+                              )
+                            )
+                            (list
+                              (list
+                                (list-ref (list-ref grid curr) 2)
+                                (list-ref (list-ref grid curr) 3)
+                                (list-ref (list-ref grid (+ curr 1)) 2)
+                                (list-ref (list-ref grid (+ curr 1)) 3)
+                              )
+                            )
+                            result
+                          )
+                        )
+                        '()
+                        '(0 2)
+                      )
+     ])
+    (check-rows squares-to-rows)
+  )
+)
+
+; QUESTION 6
 #|
 (fold-< combine init expr)
   combine: a binary function
