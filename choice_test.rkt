@@ -65,6 +65,9 @@
     (2 1 4 3))
 )
 
+(test (checkSudoku valid-soduku)
+  #t
+)
 
 (test (check-rows valid-soduku)
   #t

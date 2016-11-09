@@ -91,8 +91,25 @@ extending the functionality of the backtracking library.
 |#
 (define (generate-solutions grid)
   ; count empty slots, ()(empty_slots) * 4!) are how many possible solutions there are
-  grid
+  ; something like this
+  ;(-< (single-solution grid) (next-solution grid))
 )
+
+
+
+(define (permutation lst)
+  (if (empty? lst)
+      '()
+      (insert (permutation (rest lst))
+              (first lst))))
+
+(define (insert lst val)
+  (if (empty? lst)
+      (list val)
+      (-< (cons val lst)
+          (cons (first lst)
+                (insert (rest lst) val)))))
+
 
 #|
   checkSudoku
@@ -195,7 +212,7 @@ extending the functionality of the backtracking library.
   )
 )
 
-; QUESTION 5
+; QUESTION 6
 #|
 (fold-< combine init expr)
   combine: a binary function
