@@ -47,19 +47,10 @@ extending the functionality of the backtracking library.
 |#
 
 (define (subsets lst)
-  (let*
-    ([x (combinations lst)])
-    (foldl
-      (lambda (curr result)
-        (-< curr
-          result
-        )
-      )
-      '()
-      x
-    )
-  )
-)
+  (if (empty? lst)
+    (list '())
+    (extend (subsets (rest lst))
+      (first lst))))
 
 (define (extend lst val)
   (append lst (list (distrib lst val)))
@@ -99,8 +90,7 @@ extending the functionality of the backtracking library.
   integers.
 |#
 (define (generate-solutions grid)
-  ; for each row, generate numbers which make sense
-  ; add this permutation to the yield
+  ; count empty slots, ()(empty_slots) * 4!) are how many possible solutions there are
   grid
 )
 
