@@ -10,7 +10,7 @@ extending the functionality of the backtracking library.
 (require "choice.rkt")
 
 ; Export functions for testing. Please don't change this line!
-(provide subsets sudoku-4 fold-<)
+(provide subsets sudoku-4 fold-< distrib extend)
 
 ; QUESTION 3
 #|
@@ -45,29 +45,22 @@ extending the functionality of the backtracking library.
 > (next)
 "false."
 |#
-(define (subsets list)
-  (-< (power-set list)))
 
-(define (permutation lst)
+(define (subsets lst)
   (if (empty? lst)
-      '()
-      (insert (permutation (rest lst))
+      (list '())
+      (extend (subsets (rest lst))
               (first lst))))
 
-(define (insert lst val)
-  (if (empty? lst)
-      (list val)
-      (-< (cons val lst)
-          (cons (first lst)
-                (insert (rest lst) val)))))
+(define (extend lst val)
+  (append lst (list (distrib lst val)))
+)
 
-; change up this code
-(define (power-set set)
-  (if (null? set) '(())
-      (let ((power-set-of-rest (power-set (cdr set))))
-        (append power-set-of-rest
-                (map (lambda (subset) (cons (car set) subset))
-                     power-set-of-rest)))))
+(define (distrib lst val)
+  (if (empty? lst)
+      '()
+      (cons (cons val (first lst))
+            (distrib (rest lst) val))))
 
 ; QUESTION 4
 #|
