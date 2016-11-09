@@ -98,8 +98,6 @@ We strongly recommend not changing this file.
   Returns a choice from 'expr' which satisfies 'pred'.
   Calling 'next' will return all possible choices
   that satisfy 'pred'.
-
-
 |#
 (define (?- pred expr)
   (if (pred expr)
