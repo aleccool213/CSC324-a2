@@ -19,9 +19,12 @@ We strongly recommend not changing this file.
     on the stack of choices.
 |#
 (define (peek)
-  (cons
-    (quote -<)
-    peek-stack
+  (if (empty? peek-stack)
+    "false."
+    (cons
+      (quote -<)
+      (first peek-stack)
+    )
   )
 )
 
@@ -43,7 +46,7 @@ We strongly recommend not changing this file.
      (let/cc cont
        ; Push a new choice onto choices.
        (add-choice! (lambda () (cont (-< <expr2> ...))))
-       (set-peek! '(<expr2> ...))
+       (add-peek! '(<expr2> ...))
        <expr1>)]))
 
 
@@ -136,12 +139,18 @@ We strongly recommend not changing this file.
   (set! choices
         (cons choice choices)))
 
-(define (set-peek! choices)
-  (set! peek-stack choices))
+(define (add-peek! choices)
+  (set! peek-stack
+        (cons choices peek-stack)
+  )
+)
 
 ; "Pop": remove and return first choice from
 ; the choices stack.
 (define (get-choice!)
   (let ([choice (first choices)])
     (set! choices (rest choices))
-    choice))
+    (set! peek-stack (rest peek-stack))
+    choice
+  )
+)
