@@ -21,7 +21,7 @@ We strongly recommend not changing this file.
 (define (peek)
   (cons
     (quote -<)
-    choices-2
+    peek-stack
   )
 )
 
@@ -43,7 +43,7 @@ We strongly recommend not changing this file.
      (let/cc cont
        ; Push a new choice onto choices.
        (add-choice! (lambda () (cont (-< <expr2> ...))))
-       (set-choice-2! '(<expr2> ...))
+       (set-peek! '(<expr2> ...))
        <expr1>)]))
 
 
@@ -129,15 +129,15 @@ We strongly recommend not changing this file.
 ; The stack of choice points, represented as a list.
 (define choices '())
 
-(define choices-2 '())
+(define peek-stack '())
 
 ; "Push": add a choice to the choices stack.
 (define (add-choice! choice)
   (set! choices
         (cons choice choices)))
 
-(define (set-choice-2! choices)
-  (set! choices-2 choices))
+(define (set-peek! choices)
+  (set! peek-stack choices))
 
 ; "Pop": remove and return first choice from
 ; the choices stack.
