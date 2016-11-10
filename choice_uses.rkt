@@ -47,18 +47,13 @@ extending the functionality of the backtracking library.
 |#
 
 (define (subsets lst)
-  (apply-subsets (powerset lst)))
+  (apply-subsets (rest (combinations lst))))
 
 (define (apply-subsets lst)
-  (cond [(not (empty? lst))(-< (first lst) (apply-subsets (rest lst)))]
+  (if (not (empty? lst))
+      (-< (first lst) (apply-subsets (rest lst)))
+      '()
       ))
-
-(define (powerset lst)
-  (if (null? lst)
-      '(())
-      (append-map (lambda (x)
-                    (list x (cons (car lst) x)))
-                  (powerset (cdr lst)))))
 
 ; QUESTION 4
 #|
