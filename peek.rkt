@@ -41,10 +41,9 @@ We strongly recommend not changing this file.
     ; When there is more than one, return the first and store the rest.
     [(-< <expr1> <expr2> ...)
      (let/cc cont
-       (add-choice-2! <expr2>)
-       ...
        ; Push a new choice onto choices.
        (add-choice! (lambda () (cont (-< <expr2> ...))))
+       (set-choice-2! '(<expr2> ...))
        <expr1>)]))
 
 
@@ -127,19 +126,18 @@ We strongly recommend not changing this file.
 ; Private values for managing the stack of choices.
 ;------------------------------------------------------------------------------
 
-(define choices-2 '())
-
 ; The stack of choice points, represented as a list.
 (define choices '())
 
-(define (add-choice-2! choice)
-  (set! choices-2
-        (append choices-2 (list choice))))
+(define choices-2 '())
 
 ; "Push": add a choice to the choices stack.
 (define (add-choice! choice)
   (set! choices
         (cons choice choices)))
+
+(define (set-choice-2! choices)
+  (set! choices-2 choices))
 
 ; "Pop": remove and return first choice from
 ; the choices stack.
