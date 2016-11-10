@@ -10,7 +10,7 @@ extending the functionality of the backtracking library.
 (require "choice.rkt")
 
 ; Export functions for testing. Please don't change this line!
-(provide subsets sudoku-4 fold-< distrib extend check-squares checkSudoku check-rows check-columns generate-solutions)
+(provide subsets sudoku-4 fold-< check-squares checkSudoku check-rows check-columns generate-solutions)
 
 ; QUESTION 3
 #|
@@ -47,21 +47,13 @@ extending the functionality of the backtracking library.
 |#
 
 (define (subsets lst)
-  (if (empty? lst)
-    (list '())
-    (extend (subsets (rest lst))
-      (first lst))))
+  (apply-subsets (rest (combinations lst))))
 
-(define (extend lst val)
-  (append lst (list (distrib lst val)))
-)
-
-(define (distrib lst val)
-  (if (empty? lst)
+(define (apply-subsets lst)
+  (if (not (empty? lst))
+      (-< (first lst) (apply-subsets (rest lst)))
       '()
-      (cons (cons val (first lst))
-            (distrib (rest lst) val))))
-
+      ))
 
 ; QUESTION 4
 #|
@@ -89,7 +81,7 @@ extending the functionality of the backtracking library.
   of the grid. A permuation of the grid is all of the quotes filled with
   integers.
 |#
-(define (generate-solutions grid)
+(define (generate-solutions grid)(#t)
   ; count empty slots, ()(empty_slots) * 4!) are how many possible solutions there are
   ; something like this
   (map
