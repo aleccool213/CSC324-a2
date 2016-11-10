@@ -100,15 +100,20 @@
 (test (check-squares invalid-soduku-squares)
   #f
 )
+;
+;(test (generate-solutions grid1)
+;  '((1 2 3 4)
+;    (1 1 1 1)
+;    (1 1 2 3)
+;    (2 1 1 1))
+;)
 
-(test (all (generate-solutions grid1))
-  '(
-    '((1 2 3 4)
-      (3 4 1 2)
-      (4 1 2 3)
-      (2 3 4 1))
-   )
-)
+(test (sudoku-4 grid1)
+      '((1 2 3 4)
+        (3 4 1 2)
+        (4 1 2 3)
+        (2 3 4 1)))
+
 ;; Clear stack
 ;(clear)
 ;

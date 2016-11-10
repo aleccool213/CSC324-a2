@@ -92,7 +92,20 @@ extending the functionality of the backtracking library.
 (define (generate-solutions grid)
   ; count empty slots, ()(empty_slots) * 4!) are how many possible solutions there are
   ; something like this
-  ;(-< (single-solution grid) (next-solution grid))
+  (map
+    (lambda (row)
+      (map
+        (lambda (point)
+          (if (equal? point "")
+            (-< 1 2 3 4)
+            point
+          )
+        )
+        row
+      )
+    )
+    grid
+  )
 )
 
 
